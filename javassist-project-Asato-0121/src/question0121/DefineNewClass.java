@@ -66,11 +66,11 @@ public class DefineNewClass
 				case 2:
 					if (commonClassArray[0].length() >= commonClassArray[1].length()) 
 					{
-						superClassName = commonClassArray[1];
+						superClassName = commonClassArray[0];
 					} 
 					else 
 					{
-						superClassName = commonClassArray[0];
+						superClassName = commonClassArray[1];
 					}
 					temp = 0;
 					for (int i = 0; i <= 2; i++) 
@@ -117,10 +117,18 @@ public class DefineNewClass
 					CtClass cc2 = makeClass(pool, subClassArray[0]);
 					cc2.writeFile(outputDir);
 					System.out.println("[DBG] write output to: " + outputDir);
-					
+					cc2.defrost();
+					cc2.setSuperclass(cc1);
+					cc2.writeFile(outputDir);
+					System.out.println("[DBG] write modified output to: " + outputDir);
+
 					CtClass cc3 = makeClass(pool, subClassArray[1]);
 					cc3.writeFile(outputDir);
 					System.out.println("[DBG] write output to: " + outputDir);
+					cc3.defrost();
+					cc3.setSuperclass(cc1);
+					cc3.writeFile(outputDir);
+					System.out.println("[DBG] write modified output to: " + outputDir);
 				}
 				catch (CannotCompileException | IOException e) 
 				{
@@ -151,13 +159,6 @@ public class DefineNewClass
 	{
 		CtClass cc = pool.makeClass(newClassName);
 		System.out.println("[DBG] make class: " + cc.getName());
-		return cc;
-	}
-
-	private static CtClass makeInterface(ClassPool pool, String newInterfaceName) 
-	{
-		CtClass cc = pool.makeInterface(newInterfaceName);
-		System.out.println("[DBG] make interface: " + cc.getName());
 		return cc;
 	}
 }
