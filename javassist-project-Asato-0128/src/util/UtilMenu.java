@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class UtilMenu {
-   private static final String DELIMETER = ":";
+   private static final String DELIMETER = ",";
    static int MENU_SIZE = 3;
    static int MENU_QUIT = MENU_SIZE;
    static Scanner scanner = new Scanner(System.in);
@@ -13,7 +13,8 @@ public class UtilMenu {
    public static String[] getInputsClass() 
 	{
 	   System.out.println("=============================================");
-	   System.out.print("Enter three classes (\"q\" to terminate)\n");
+	   System.out.print("Enter three classes (e.g. Point,Rectangle,Circle)\n"
+	   		+ "(\"q\" to terminate)\n");
 	   String input = scanner.nextLine();
 	   if (input.trim().equalsIgnoreCase("q")) 
 		{
@@ -33,9 +34,8 @@ public class UtilMenu {
       System.out.println("Simple Bytecode Engineering Example Program");
       System.out.println("=============================================");
       System.out.println("\tMenu Options:");
-      System.out.println("\t1. Adding a New Implementation");
-      System.out.println("\t2. Deleting a Function");
-      System.out.println("\t3. Exit the program");
+      System.out.println("\t1. Change the code");
+      System.out.println("\t2. Exit the program");
       System.out.println("=============================================");
       System.out.print("Please select an option:");
    }

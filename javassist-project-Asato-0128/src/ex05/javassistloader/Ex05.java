@@ -13,6 +13,7 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.Loader;
 import javassist.NotFoundException;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.Arguments;
 import util.UtilMenu;
 
 public class Ex05
@@ -21,31 +22,82 @@ public class Ex05
 	private static final String WORK_DIR = System.getProperty("user.dir");
 	private static final String OUT_DIR = WORK_DIR + SEP + "output";
 	private static final String PKG_NAME = "target.";
+	static List<String> methodModified = new ArrayList<String>();
 
 	public static void main(String[] args) 
 	{
+		String[] classArr = UtilMenu.getInputsClass();
+		setInheritage(classInheritance(classArr));
 		while (true) 
-		{
-			String[] classArr = UtilMenu.getInputsClass();
-			setInheritage(classInheritance(classArr));
-			
+		{			
+			String[] func = null;
 			UtilMenu.showMenuOptionsAddRemove();
 	        int option = UtilMenu.getOption();
 	        switch (option) {
 	        case 1:
-	        	System.out.println("[DBG] Enter (1) the method to be modified and\n" //
-	                  + "(2) a method call to be inserted (e.g., getVal: move(10, 20);):");
-	            String[] arguments = UtilMenu.getArguments();
+	        	System.out.println("[DBG] Enter (1) the usage method, (2) a incremental"
+	        			+ " method and (3) a getter method (e.g. add,incX,getX, or remove,incY,getY)");
+	            func = UtilMenu.getArguments();
 	            break;
-	        case 2: 
-	        	System.out.println("[DBG] Enter (1) the method to be modified and\n" //
-		                  + "(2) a method call to be removed (e.g., getVal: move(10, 20);):");
-		        arguments = UtilMenu.getArguments();
 	         default:
 	            break;
 	         }
+	        if (func.length == 3)
+	        {
+	        	if (!methodModified.contains(func[0])) 
+	        	{
+	        	modifyClass(func[0],func[1],func[2], classArr);
+	        	}
+	        	else
+	        	{
+	        		System.out.println("[WRN] This method" + func[0] + "has been modified!" );
+	        	}
+	        }
 	      }
 	   }
+	private static void modifyClass(String usageMethod, String incrementalMethod, String getMethod, String[] classesArray)
+	{
+		switch(usageMethod)
+		{
+		case "add":
+		case "remove":
+			try {
+				for(int i = 1; i < 3; i++)
+				{
+					ClassPool cp = ClassPool.getDefault();
+					insertClassPath(cp);
+					CtClass cc = cp.get(PKG_NAME + classesArray[i]);
+					CtMethod modifyM = cc.getDeclaredMethod(usageMethod);
+					String BLK = "\n{\n" + incrementalMethod + "();" + "\n" //
+									+ "System.out.println(\"[TR] " + getMethod + "() "
+									+ "result : \" + " + getMethod + "() ); " + "}";
+					System.out.println("[DBG] Block: " + BLK);
+					cc.defrost();
+					modifyM.insertBefore(BLK);
+					
+					Loader cl = new Loader(cp);
+					Class<?> c = cl.loadClass(PKG_NAME + classesArray[i]);
+					Object obj = c.newInstance();
+					System.out.println("[DBG] Created a " + PKG_NAME + classesArray[i] + " object.");
+
+					Class<?> objClass = obj.getClass();
+					Method m = objClass.getDeclaredMethod(usageMethod, new Class[] {});
+					System.out.println("[DBG] Called getDeclaredMethod.");
+					Object invoker = m.invoke(obj, new Object[] {});
+					System.out.println("[DBG] " + usageMethod + " result: " + invoker);
+				}
+				methodModified.add(usageMethod);
+				break;
+			}
+			catch (Exception e) 
+			{
+		         e.printStackTrace();
+		      }
+		default:
+			System.out.println("Such usage method do not exist.");
+			break;
+		}
+	}
 	/**
 	 * Class to identify class inheritance base on ex 0116
 	 * @param input classes set up their inheritance
