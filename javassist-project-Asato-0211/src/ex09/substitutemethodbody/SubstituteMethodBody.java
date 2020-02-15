@@ -36,6 +36,7 @@ public class SubstituteMethodBody extends ClassLoader {
 				      modified.add(inputs[0] + "," + inputs[1]);
 				      Method mainMethod = c.getDeclaredMethod("main", new Class[] { String[].class });
 				      mainMethod.invoke(null, new Object[] { args });
+				      System.out.println("------------------------");
 				}
 				else
 				{
