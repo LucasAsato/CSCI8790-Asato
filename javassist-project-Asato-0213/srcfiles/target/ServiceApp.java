@@ -1,22 +1,22 @@
 package target;
 
-public class ServiceApp {
-	int x = 1000, y = 1000;
-	void draw() {
-		fill(2, 2);
-	}
-	
-	void fill(int dx, int dy)
-	{
-		x = dx;
-		y = dy;
-		System.out.println("\t[ServiceApp] x: " + x + ", y: " + y);
-		System.out.println("\t[ServiceApp] dx: " + dx + ", dy: " + dy);
-	}
-	public static void main (String[] args) throws Exception{
-		System.out.println("\t[ServiceApp] Run...");
-		ServiceApp a = new ServiceApp();
-		a.draw();
-		System.out.println("[ServiceApp] Done.");
-	}
+public class ServiceApp{
+   int srcX = 22;
+   int srcY=22;
+   String srcID="Service";
+
+   public void move(int dx,int dy,String str) {
+	srcX=dx;
+	srcY=dy;
+	srcID=str;
+   }
+
+
+
+   public static void main(String[] args) throws Exception {
+      System.out.println("[ServiceApp] Run...");
+      ServiceApp a = new ServiceApp();
+      a.move(0,0,null);
+      System.out.println("[ServiceApp] Done. ");
+   }
 }
